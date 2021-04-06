@@ -5,6 +5,7 @@ const prefix = "$";
 const fs = require('fs');
 const mysql = require('mysql');
 const Canvas = require('canvas');
+const config = require('./config.json');
 
 client.on('ready', async (guild, message) => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -138,9 +139,9 @@ client.on('message', async (message) => {
     const command = messageArray[0];
     const args = messageArray.slice(1);
   
-    if (!command.startsWith(prefix)) return;
+    if (!command.startsWith(config.prefix)) return;
   
-    const cmd = client.commands.get(command.slice(prefix.length));
+    const cmd = client.commands.get(command.slice(config.prefix.length));
     if (cmd) cmd.run(client, message, args);
     if (message.author.bot) {
       return;
@@ -186,4 +187,4 @@ client.on('guildCreate', (guild) => {
         
 })
 
-client.login('ODI4NzMyMDcwMTYzNTEzMzU1.YGt24g._tzM5PiF1QMgVb8qt05rnZFpFK8');
+client.login(config.token);
