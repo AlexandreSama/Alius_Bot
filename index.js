@@ -210,8 +210,15 @@ client.on('guildCreate', (guild) => {
                             connection.destroy();
                         }
                         if(results){
-                            console.log("Base de données crée avec succés !" + results)
-                            connection.destroy();
+                            connection.query(`CREATE TABLE presentation (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, prenom VARCHAR(100) NOT NULL, age INT, description_mental TEXT NOT NULL, description_physique TEXT NOT NULL, classe VARCHAR(100))`, function(error, results){
+                                if(error){
+                                    console.log(error);
+                                }
+                                if(results){
+                                    console.log("Base de données crée avec succés !" + results)
+                                    connection.destroy();
+                                }
+                            })
                         }
                     })
                 }
