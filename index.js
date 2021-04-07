@@ -6,6 +6,7 @@ const fs = require('fs');
 const mysql = require('mysql');
 const Canvas = require('canvas');
 const config = require('./config.json');
+const schedule = require('node-schedule');
 
 client.on('ready', async (guild, message) => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -13,18 +14,46 @@ client.on('ready', async (guild, message) => {
     let random = nameActivitys[Math.floor((Math.random()*nameActivitys.length))]
     client.user.setActivity({name: random, type: "PLAYING"})
 
+schedule.scheduleJob('* * 1 * *', function(){
+    let dayRightNow = new Date().getDate();
+    var connection = mysql.createConnection({
+        host     : '185.216.25.216',
+        user     : 'bojo',
+        password : 'bojo',
+        port: 3306
+    });
+    connection.query('USE KashirPlace', function(error, results){
+        if(error){
+            console.log(error)
+        }
+        if(results){
+            connection.query(`SELECT heure_du_cours FROM cours WHERE jour_du_cours = ${dayRightNow}`, function(error, results){
+                if(error){
+                    console.log(error)
+                }
+                if(results){
+                    let res = JSON.parse(JSON.stringify(results));
+                    let hourRightNow = new Date().getHours() + 1;
+                    console.log(hourRightNow)
+                    res.forEach(element => {
+                        console.log(element['heure_du_cours']);
+                        if(element['heure_du_cours'] == hourRightNow){
+                            let channel = client.channels.cache.get('799060721475911706');
+                            channel.send("Bonjour, il reste une heure avant le début du cours !")
+                        }else{
+                            return ;
+                        }
+                    })
+                }
+            })
+        }
+    })
+});
     setInterval(async function(){
         const canvas = Canvas.createCanvas(1683, 1190);
         const ctx = canvas.getContext('2d');
         const background = await Canvas.loadImage('Assets/calendar.png')
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
-        var connection = mysql.createConnection({
-            host     : '185.216.25.216',
-            user     : 'bojo',
-            password : 'bojo',
-            port: 3306
-        });
 
         connection.query('USE KashirPlace', function(error, results){
             if(error){
@@ -102,6 +131,10 @@ client.on('ready', async (guild, message) => {
         })
     }
         , 3600000)
+
+    setInterval(function(){
+        
+    })
 })
 
 fs.readdir('./Commands/', (error, f) => {
