@@ -14,6 +14,7 @@ client.on('ready', async (guild, message) => {
     let random = nameActivitys[Math.floor((Math.random()*nameActivitys.length))]
     client.user.setActivity({name: random, type: "PLAYING"})
 
+    //Auto-Ping for Classes (1h before it start)
 schedule.scheduleJob('* * 1 * *', function(){
     let dayRightNow = new Date().getDate();
     var connection = mysql.createConnection({
@@ -49,6 +50,8 @@ schedule.scheduleJob('* * 1 * *', function(){
         }
     })
 });
+
+//Actualise every hours the calendar for Classes
     setInterval(async function(){
         const canvas = Canvas.createCanvas(1683, 1190);
         const ctx = canvas.getContext('2d');
@@ -130,11 +133,7 @@ schedule.scheduleJob('* * 1 * *', function(){
             }
         })
     }
-        , 3600000)
-
-    setInterval(function(){
-        
-    })
+        , 3600000);
 })
 
 fs.readdir('./Commands/', (error, f) => {
@@ -183,6 +182,8 @@ client.on('message', async (message) => {
 
 
 client.on('guildCreate', (guild) => {
+
+    //Create Database for each server the bot join
     let guildName = guild.name;;
     let guildNameNoSpace = guildName.replace(/\s/g, '');
 
